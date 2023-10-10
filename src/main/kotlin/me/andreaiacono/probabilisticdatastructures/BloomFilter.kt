@@ -25,15 +25,13 @@ class BloomFilter(expectedSize: Int, errorRate: Double) {
         .mapToObj { n -> Hasher(primes[n + 4], primes[3 * n + 3]) }
         .toList()
 
-    fun add(element: String) {
-        hashers.forEach { hasher -> bitSet.set(abs(hasher.hashCode(element)) % m, true) }
-    }
+    fun contains(item: String) = hashers.all { hasher -> bitSet.get(abs(hasher.hashCode(item)) % m) }
 
-    fun contains(element: String): Boolean {
-        return hashers.all { hasher -> bitSet.get(abs(hasher.hashCode(element)) % m) }
-    }
+    fun add(item: String) = hashers.forEach { hasher -> bitSet.set(abs(hasher.hashCode(item)) % m, true) }
 
     private class Hasher(private val base: Int, private val multiplier: Int) {
-        fun hashCode(value: String): Int = value.map { it.code }.fold(base) { acc, curr -> acc * multiplier + curr }
+        fun hashCode(value: String): Int = value
+            .map { it.code }
+            .fold(base) { acc, curr -> acc * multiplier + curr }
     }
 }
