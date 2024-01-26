@@ -2,12 +2,8 @@ import me.andreaiacono.probabilisticdatastructures.utils.Primes
 import java.util.stream.IntStream
 
 class CountMinSketch(d: Int, private val w: Int) {
-    private val hashers = IntStream
-        .rangeClosed(1, d)
-        .mapToObj { n -> Hasher(w, Primes.primes[n * 7 + 4], Primes.primes[3 * n + 3]) }
-        .toList()
-
     private val count = Array(d) { LongArray(w) }
+    private val hashers = (1..d).map { n -> Hasher(w, Primes.primes[n * 7 + 4], Primes.primes[3 * n + 3]) }
 
     fun add(item: String) = hashers.forEachIndexed { idx, hasher -> count[idx][hasher.hashCode(item) % w]++ }
 

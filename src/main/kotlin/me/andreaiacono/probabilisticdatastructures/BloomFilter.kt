@@ -20,10 +20,7 @@ class BloomFilter(expectedSize: Int, errorRate: Double) {
     private val m: Int = -(expectedSize * ln(errorRate) / ln2squared).toInt()   // bitset size
     private val k = ceil(-log2(errorRate)).toInt()                              // number of hash functions
     private val bitSet = BitSet(m)
-    private val hashers = IntStream
-        .rangeClosed(1, k)
-        .mapToObj { n -> Hasher(primes[n + 4], primes[3 * n + 3]) }
-        .toList()
+    private val hashers = (1..k).map { n -> Hasher(primes[n + 4], primes[3 * n + 3]) }
 
     fun contains(item: String) = hashers.all { hasher -> bitSet.get(abs(hasher.hashCode(item)) % m) }
 

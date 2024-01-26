@@ -17,10 +17,7 @@ class CountingBloomFilter(expectedSize: Int, errorRate: Double) {
     private val m: Int = -(expectedSize * ln(errorRate) / ln2squared).toInt()   // bitset size
     private val k = ceil(-log2(errorRate)).toInt()                              // number of hash functions
     private val counters = ByteArray(m) { Byte.MIN_VALUE }
-    private val hashers = IntStream
-        .rangeClosed(1, k)
-        .mapToObj { n -> Hasher(primes[n + 4], primes[3 * n + 3]) }
-        .toList()
+    private val hashers = (1..k).map { n -> Hasher(primes[n + 4], primes[3 * n + 3]) }
 
     fun add(item: String) = hashers.forEach { counters[abs(it.hashCode(item)) % m]++ }
     fun delete(item: String) = hashers.forEach { counters[abs(it.hashCode(item)) % m]-- }
